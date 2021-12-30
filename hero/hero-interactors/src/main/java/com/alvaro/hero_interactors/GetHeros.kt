@@ -6,6 +6,7 @@ import com.alvaro.core.domain.UIComponent
 import com.alvaro.core.ui.Logger
 import com.alvaro.hero_datasource.network.HeroService
 import com.alvaro.hero_domain.Hero
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -17,6 +18,8 @@ class GetHeros(
     fun execute() : Flow<DataState<List<Hero>>> = flow{
         try{
             emit(DataState.Loading(progressBarState = ProgressBarState.Loading))
+
+            delay(1000)
 
             val heros: List<Hero> = try{
                 service.getHeroStats()
