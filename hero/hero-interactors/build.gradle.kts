@@ -2,6 +2,10 @@ apply {
     from("$rootDir/library-build.gradle")
 }
 
+plugins {
+    kotlin(KotlinPlugins.serialization) version Kotlin.version
+}
+
 dependencies {
     //---------- local modules created by us -------------//
     "implementation"(project(path = Modules.core))
@@ -9,5 +13,5 @@ dependencies {
     "implementation"(project(path = Modules.heroDomain))
 
     //--------- remote modules (third party libraries) --//
-    "implementation"(project(path = Kotlinx.coroutinesCore))
+    "implementation"(Kotlinx.coroutinesCore)
 }
