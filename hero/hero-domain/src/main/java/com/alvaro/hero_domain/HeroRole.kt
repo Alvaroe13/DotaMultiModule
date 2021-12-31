@@ -5,7 +5,7 @@ sealed class HeroRole(
 ){
 
     object Carry : HeroRole( uiValue = "Carry")
-    object Scape : HeroRole( uiValue = "Scape")
+    object Escape : HeroRole( uiValue = "Scape")
     object Nuker : HeroRole( uiValue = "Nuker")
     object Initiator : HeroRole( uiValue = "Initiator")
     object Durable : HeroRole( uiValue = "Durable")
@@ -22,8 +22,8 @@ fun getHeroRole(uiValue: String) : HeroRole{
         HeroRole.Carry.uiValue->{
             HeroRole.Carry
         }
-        HeroRole.Scape.uiValue->{
-            HeroRole.Scape
+        HeroRole.Escape.uiValue->{
+            HeroRole.Escape
         }
         HeroRole.Nuker.uiValue->{
             HeroRole.Nuker
