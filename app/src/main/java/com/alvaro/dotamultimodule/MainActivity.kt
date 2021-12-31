@@ -20,6 +20,7 @@ import com.alvaro.core.ui.Logger
 import com.alvaro.dotamultimodule.ui.theme.DotaMultiModuleTheme
 import com.alvaro.hero_domain.Hero
 import com.alvaro.hero_interactors.HeroInteractors
+import com.squareup.sqldelight.android.AndroidSqliteDriver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -35,7 +36,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val getheros = HeroInteractors.build().getHeros
+        val getheros = HeroInteractors.build(
+            sqlDriver = AndroidSqliteDriver(
+                schema = HeroInteractors.schema,
+                context = this,
+                name = HeroInteractors.dbName,
+            )
+        ).getHeros
         val logger = Logger("GetHeroTest")
 
         getheros.execute().onEach { dataState ->
