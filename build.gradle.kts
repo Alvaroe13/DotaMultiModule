@@ -8,6 +8,7 @@ buildscript {
         classpath(Build.androidBuildTools)
         classpath(Build.kotlinGradlePlugin)
         classpath(Build.sqlDelightGradlePlugin)
+        classpath(Build.hiltAndroid)
         //classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20")
     }
 }

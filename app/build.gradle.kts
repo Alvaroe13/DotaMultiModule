@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -63,4 +65,7 @@ dependencies{
     implementation(SqlDelight.androidDriver) //for android platform
 
     implementation(Coil.coil)
+
+    implementation(Hilt.android)
+    kapt(Hilt.compiler)
 }
