@@ -25,7 +25,15 @@ constructor(
     val state: MutableState<HeroListState> = mutableStateOf(HeroListState())
 
     init {
-        getHeros()
+        triggerEvent(HeroListEvent.GetHerosEvent)
+    }
+
+    fun triggerEvent(event: HeroListEvent){
+        when(event){
+            is HeroListEvent.GetHerosEvent ->{
+                getHeros()
+            }
+        }
     }
 
     private fun getHeros() {
