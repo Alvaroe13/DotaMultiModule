@@ -3,7 +3,7 @@ package com.alvaro.hero_interactors
 import com.alvaro.core.domain.DataState
 import com.alvaro.core.domain.ProgressBarState
 import com.alvaro.core.domain.UIComponent
-import com.alvaro.core.ui.Logger
+import com.alvaro.core.util.Logger
 import com.alvaro.hero_datasource.cache.HeroCache
 import com.alvaro.hero_datasource.network.HeroService
 import com.alvaro.hero_domain.Hero

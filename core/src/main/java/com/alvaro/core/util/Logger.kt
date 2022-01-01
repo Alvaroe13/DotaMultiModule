@@ -1,4 +1,4 @@
-package com.alvaro.core.ui
+package com.alvaro.core.util
 
 class Logger(
     private val tag : String,

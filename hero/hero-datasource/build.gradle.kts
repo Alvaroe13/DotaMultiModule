@@ -4,7 +4,7 @@ apply {
 
 plugins {
     //kotlin plugin serialization for ktor
-    //kotlin(KotlinPlugins.serialization) version Kotlin.version
+    kotlin(KotlinPlugins.serialization) version Kotlin.version
     id(SqlDelight.plugin)
 }
 dependencies {
@@ -16,6 +16,7 @@ dependencies {
     "implementation"(Ktor.clientSerialization)
     "implementation"(Ktor.android)
     "implementation"(Ktor.logger)
+    "implementation"(Ktor.jsonSerialization)
 
     "implementation"(SqlDelight.runtime)
 }
