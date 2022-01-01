@@ -13,6 +13,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import coil.ImageLoader
 import com.alvaro.core.domain.DataState
 import com.alvaro.core.domain.ProgressBarState
 import com.alvaro.core.domain.UIComponent
@@ -32,8 +33,19 @@ class MainActivity : ComponentActivity() {
 
     private val state: MutableState<HeroListState> = mutableStateOf(HeroListState())
 
+    private lateinit var imageLoader: ImageLoader
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        imageLoader = ImageLoader.Builder(applicationContext)
+            .error(R.drawable.error_image)
+            .placeholder(R.drawable.white_background)
+            .availableMemoryPercentage(0.25)
+            .crossfade(true)
+            .build()
+
 
         val getheros = HeroInteractors.build(
             sqlDriver = AndroidSqliteDriver(
@@ -57,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 is DataState.Data -> {
-                    state.value = state.value.copy(heros = dataState.data ?: listOf() )
+                    state.value = state.value.copy(heros = dataState.data ?: listOf())
                 }
                 is DataState.Loading -> {
                     //progressBarState.value = dataState.progressBarState
@@ -69,7 +81,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DotaMultiModuleTheme {
-               HeroList(state = state.value)
+                HeroList(
+                    state = state.value,
+                    imageLoader = imageLoader
+                )
             }
         }
 

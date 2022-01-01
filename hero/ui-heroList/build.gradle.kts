@@ -9,4 +9,6 @@ dependencies {
     "implementation"(project(Modules.heroInteractors))
 
     "implementation"(SqlDelight.androidDriver)
+
+    "implementation"(Coil.coil)
 }

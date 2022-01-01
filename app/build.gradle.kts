@@ -61,4 +61,6 @@ dependencies{
     implementation(Google.material)
 
     implementation(SqlDelight.androidDriver) //for android platform
+
+    implementation(Coil.coil)
 }
