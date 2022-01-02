@@ -15,7 +15,8 @@ import com.alvaro.ui_herolist.components.HeroListItem
 @Composable
 fun HeroList(
     state: HeroListState,
-    imageLoader: ImageLoader
+    imageLoader: ImageLoader,
+    navigateToDetailScreen: (Int) -> Unit
 ) {
 
 
@@ -26,14 +27,16 @@ fun HeroList(
             items(state.heros) { hero ->
                 HeroListItem(
                     hero = hero,
-                    onSelectHero = {},
-                    imageLoader = imageLoader
+                    imageLoader = imageLoader,
+                    onSelectHero = { heroId: Int ->
+                        navigateToDetailScreen(heroId)
+                    },
                 )
             }
         }
 
-        if(state.progressBarState is ProgressBarState.Loading){
-            CircularProgressIndicator( modifier = Modifier.align(Alignment.Center))
+        if (state.progressBarState is ProgressBarState.Loading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
 
     }
