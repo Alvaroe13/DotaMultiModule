@@ -20,8 +20,6 @@ class GetHeros(
         try{
             emit(DataState.Loading(progressBarState = ProgressBarState.Loading))
 
-            delay(1000)
-
             val heros: List<Hero> = try{
                 service.getHeroStats()
             }catch (e: Exception){

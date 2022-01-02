@@ -22,6 +22,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    //according to coil doc is recommended to use one instance of this object through the entire app,
+    //otherwise it may not work properly
     @Inject
     lateinit var imageLoader: ImageLoader
 
@@ -38,9 +40,9 @@ class MainActivity : ComponentActivity() {
                     startDestination = Screen.HeroList.route,
                     builder = {
 
-                        addHeroList( navController = navController, imageLoader = imageLoader )
+                        addHeroList(navController = navController, imageLoader = imageLoader)
 
-                        addHeroDetail()
+                        addHeroDetail( imageLoader = imageLoader)
                     }
                 )
 
@@ -71,13 +73,16 @@ fun NavGraphBuilder.addHeroList(
     }
 }
 
-fun NavGraphBuilder.addHeroDetail() {
+fun NavGraphBuilder.addHeroDetail(imageLoader: ImageLoader) {
     composable(
         route = Screen.HeroDetail.route + "/{heroId}",
         arguments = Screen.HeroDetail.arguments,
     ) {
         val viewModel: HeroDetailViewModel = hiltViewModel()
-        HeroDetail(state = viewModel.state.value)
+        HeroDetail(
+            state = viewModel.state.value,
+            imageLoader = imageLoader
+        )
     }
 }
 
