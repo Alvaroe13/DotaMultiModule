@@ -13,8 +13,7 @@ import kotlinx.coroutines.flow.flow
 
 class GetHeros(
     private val service : HeroService,
-    private val cache : HeroCache,
-    private val logger : Logger? = null
+    private val cache : HeroCache
 ) {
 
     fun execute() : Flow<DataState<List<Hero>>> = flow{

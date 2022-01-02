@@ -4,8 +4,9 @@ import com.alvaro.hero_datasource.cache.HeroCache
 import com.alvaro.hero_datasource.network.HeroService
 import com.squareup.sqldelight.db.SqlDriver
 
-class HeroInteractors(
-    val getHeros: GetHeros
+class HeroInteractors private constructor(
+    val getHeros: GetHeros,
+    var getHeroDetails: GetHeroDetails
 ) {
 
     companion object Factory {
@@ -16,6 +17,9 @@ class HeroInteractors(
             return HeroInteractors(
                 getHeros = GetHeros(
                     service = service,
+                    cache = cache
+                ),
+                getHeroDetails = GetHeroDetails(
                     cache = cache
                 )
             )

@@ -13,6 +13,7 @@ import coil.ImageLoader
 import com.alvaro.dotamultimodule.navigation.Screen
 import com.alvaro.dotamultimodule.ui.theme.DotaMultiModuleTheme
 import com.alvaro.ui_herodetail.ui.HeroDetail
+import com.alvaro.ui_herodetail.ui.HeroDetailViewModel
 import com.alvaro.ui_herolist.ui.HeroList
 import com.alvaro.ui_herolist.ui.HeroListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,9 +75,9 @@ fun NavGraphBuilder.addHeroDetail() {
     composable(
         route = Screen.HeroDetail.route + "/{heroId}",
         arguments = Screen.HeroDetail.arguments,
-    ) { navBackStackEntry ->
-        val heroId = navBackStackEntry.arguments?.get("heroId") as Int?
-        HeroDetail(heroId = heroId)
+    ) {
+        val viewModel: HeroDetailViewModel = hiltViewModel()
+        HeroDetail(state = viewModel.state.value)
     }
 }
 
