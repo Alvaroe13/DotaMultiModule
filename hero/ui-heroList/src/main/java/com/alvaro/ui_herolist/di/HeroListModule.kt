@@ -1,6 +1,7 @@
 package com.alvaro.ui_herolist.di
 
 import com.alvaro.core.util.Logger
+import com.alvaro.hero_interactors.FilterHeros
 import com.alvaro.hero_interactors.GetHeros
 import com.alvaro.hero_interactors.HeroInteractors
 import dagger.Module
@@ -34,5 +35,13 @@ object HeroListModule {
         interactors: HeroInteractors
     ) : GetHeros {
         return interactors.getHeros
+    }
+
+    @Provides
+    @Singleton
+    fun provideFilterHerosInteractor(
+        interactors: HeroInteractors
+    ): FilterHeros {
+        return interactors.filterHeros
     }
 }
