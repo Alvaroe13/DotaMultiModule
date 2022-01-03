@@ -3,6 +3,7 @@ package com.alvaro.dotamultimodule
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -19,6 +20,7 @@ import com.alvaro.ui_herolist.ui.HeroListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@ExperimentalComposeUiApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -54,7 +56,7 @@ class MainActivity : ComponentActivity() {
 
 
 }
-
+@ExperimentalComposeUiApi
 fun NavGraphBuilder.addHeroList(
     navController: NavController,
     imageLoader: ImageLoader
@@ -68,7 +70,8 @@ fun NavGraphBuilder.addHeroList(
             imageLoader = imageLoader,
             navigateToDetailScreen = { heroId ->
                 navController.navigate("${Screen.HeroDetail.route}/$heroId")
-            }
+            },
+            events = viewModel::triggerEvent
         )
     }
 }

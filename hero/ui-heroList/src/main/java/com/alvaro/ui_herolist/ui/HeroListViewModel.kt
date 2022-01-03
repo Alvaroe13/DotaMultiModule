@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.alvaro.core.domain.DataState
 import com.alvaro.core.domain.UIComponent
 import com.alvaro.core.util.Logger
+import com.alvaro.hero_domain.Hero
 import com.alvaro.hero_interactors.GetHeros
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -28,12 +29,31 @@ constructor(
         triggerEvent(HeroListEvents.GetHerosEvent)
     }
 
-    fun triggerEvent(events: HeroListEvents){
-        when(events){
-            is HeroListEvents.GetHerosEvent ->{
+    fun triggerEvent(events: HeroListEvents) {
+        logger.log("triggerEvent= ${events}")
+        when (events) {
+            is HeroListEvents.GetHerosEvent -> {
                 getHeros()
             }
+            is HeroListEvents.FilterHeros -> {
+                filterHeros()
+            }
+            is HeroListEvents.SearchHeroByName -> {
+                logger.log("triggerEvent search by name= ${events.heroName} ")
+                updateHeroNameQuery(events.heroName)
+            }
         }
+    }
+
+    private fun updateHeroNameQuery(heroNameQuery: String) {
+        state.value = state.value.copy(heroNameQuery = heroNameQuery)
+    }
+
+    private fun filterHeros() {
+        val filteredList: MutableList<Hero> = state.value.heros.filter { hero ->
+            hero.localizedName.lowercase().contains(state.value.heroNameQuery.lowercase())
+        }.toMutableList()
+        state.value = state.value.copy(filteredHeros = filteredList)
     }
 
     private fun getHeros() {
@@ -51,6 +71,7 @@ constructor(
                 }
                 is DataState.Data -> {
                     state.value = state.value.copy(heros = dataState.data ?: listOf())
+                    filterHeros()
                 }
                 is DataState.Loading -> {
                     //progressBarState.value = dataState.progressBarState
