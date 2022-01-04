@@ -30,11 +30,13 @@ import java.lang.Math.round
 fun HeroDetail(
     state: HeroDetailState,
     imageLoader: ImageLoader,
+    events: (HeroDetailEvents) -> Unit
 ) {
     DefaultScreenUI(
         messageQueue = state.messageQueue,
         progressBarState = state.progressBarState,
         onRemoveHeadFromQueue = {
+            events(HeroDetailEvents.OnRemoveHeadFromQueue)
         },
     ) {
 

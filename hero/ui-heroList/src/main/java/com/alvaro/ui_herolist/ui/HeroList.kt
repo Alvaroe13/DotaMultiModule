@@ -29,7 +29,7 @@ fun HeroList(
         messageQueue = state.messageQueue,
         progressBarState = state.progressBarState,
         onRemoveHeadFromQueue = {
-
+            events(HeroListEvents.OnRemoveHeadFromQueue)
         },
         content = {
             Column {

@@ -56,6 +56,9 @@ constructor(
             is HeroListEvents.UpdateAttributeFilter -> {
                 updateAttributeFilter(event.heroAttribute)
             }
+            is HeroListEvents.OnRemoveHeadFromQueue->{
+                removeHeadFromQueue()
+            }
         }
     }
 
@@ -120,5 +123,16 @@ constructor(
         queue.add(uiComponent)
         state.value = state.value.copy(messageQueue = Queue(mutableListOf())) // force recompose
         state.value = state.value.copy(messageQueue = queue)
+    }
+
+    private fun removeHeadFromQueue(){
+        try{
+            val messageQueue = state.value.messageQueue
+            messageQueue.remove()
+            state.value = state.value.copy(messageQueue = Queue(mutableListOf())) // force recompose
+            state.value = state.value.copy( messageQueue = messageQueue)
+        }catch(e : Exception){
+            logger.log("Nothing to remove from message queue")
+        }
     }
 }

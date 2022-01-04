@@ -38,7 +38,12 @@ constructor(
 
     fun triggerEvent(events: HeroDetailEvents) {
         when (events) {
-            is HeroDetailEvents.GetHeroDetails -> getHeroDetails(heroId = events.heroId)
+            is HeroDetailEvents.GetHeroDetails ->{
+                getHeroDetails(heroId = events.heroId)
+            }
+            is HeroDetailEvents.OnRemoveHeadFromQueue ->{
+                removeHeadFromQueue()
+            }
         }
     }
 
@@ -70,5 +75,16 @@ constructor(
         queue.add(uiComponent)
         state.value = state.value.copy(messageQueue = Queue(mutableListOf())) // force recompose
         state.value = state.value.copy(messageQueue = queue)
+    }
+
+    private fun removeHeadFromQueue(){
+        try{
+            val messageQueue = state.value.messageQueue
+            messageQueue.remove()
+            state.value = state.value.copy(messageQueue = Queue(mutableListOf())) // force recompose
+            state.value = state.value.copy( messageQueue = messageQueue)
+        }catch(e : Exception){
+            logger.log("Nothing to remove from message queue")
+        }
     }
 }
