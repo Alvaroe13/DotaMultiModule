@@ -7,6 +7,7 @@ dependencies {
     "implementation"(project(path = Modules.core))
     "implementation"(project(path = Modules.heroDomain))
     "implementation"(project(path = Modules.heroInteractors))
+    "implementation"(project(path = Modules.components))
 
 
     "implementation"(Coil.coil)
