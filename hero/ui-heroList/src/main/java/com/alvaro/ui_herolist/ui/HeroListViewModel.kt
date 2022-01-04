@@ -8,6 +8,7 @@ import com.alvaro.core.domain.DataState
 import com.alvaro.core.domain.UIComponent
 import com.alvaro.core.domain.UIComponentState
 import com.alvaro.core.util.Logger
+import com.alvaro.hero_domain.HeroAttribute
 import com.alvaro.hero_domain.HeroFilter
 import com.alvaro.hero_interactors.FilterHeros
 import com.alvaro.hero_interactors.GetHeros
@@ -51,7 +52,15 @@ constructor(
             is HeroListEvents.UpdateFilterDialogState -> {
                 updateFilterDialogState(dialogState = event.uiComponentState)
             }
+            is HeroListEvents.UpdateAttributeFilter -> {
+                updateAttributeFilter(event.heroAttribute)
+            }
         }
+    }
+
+    private fun updateAttributeFilter(heroAttribute: HeroAttribute) {
+        state.value = state.value.copy(primaryAttribute = heroAttribute)
+        filterHeros()
     }
 
     private fun updateFilterDialogState(dialogState: UIComponentState) {
