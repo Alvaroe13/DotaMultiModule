@@ -6,8 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvaro.core.domain.DataState
 import com.alvaro.core.domain.UIComponent
+import com.alvaro.core.domain.UIComponentState
 import com.alvaro.core.util.Logger
-import com.alvaro.hero_domain.Hero
+import com.alvaro.hero_domain.HeroFilter
 import com.alvaro.hero_interactors.FilterHeros
 import com.alvaro.hero_interactors.GetHeros
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,9 +32,9 @@ constructor(
         triggerEvent(HeroListEvents.GetHerosEvent)
     }
 
-    fun triggerEvent(events: HeroListEvents) {
-        logger.log("triggerEvent= ${events}")
-        when (events) {
+    fun triggerEvent(event: HeroListEvents) {
+        logger.log("triggerEvent= ${event}")
+        when (event) {
             is HeroListEvents.GetHerosEvent -> {
                 getHeros()
             }
@@ -41,10 +42,25 @@ constructor(
                 filterHeros()
             }
             is HeroListEvents.SearchHeroByName -> {
-                logger.log("triggerEvent search by name= ${events.heroName} ")
-                updateHeroNameQuery(events.heroName)
+                logger.log("triggerEvent search by name= ${event.heroName} ")
+                updateHeroNameQuery(event.heroName)
+            }
+            is HeroListEvents.UpdateHeroFilter -> {
+                updateHeroFilter(event.heroFilter)
+            }
+            is HeroListEvents.UpdateFilterDialogState -> {
+                updateFilterDialogState(dialogState = event.uiComponentState)
             }
         }
+    }
+
+    private fun updateFilterDialogState(dialogState: UIComponentState) {
+        state.value = state.value.copy(filterDialogState = dialogState)
+    }
+
+    private fun updateHeroFilter(heroFilter: HeroFilter) {
+        state.value = state.value.copy(heroFilter = heroFilter)
+        filterHeros()
     }
 
     private fun updateHeroNameQuery(heroNameQuery: String) {
@@ -52,13 +68,13 @@ constructor(
     }
 
     private fun filterHeros() {
-       val filteredList =  filterHeros.exceute(
+        val filteredList = filterHeros.exceute(
             currentList = state.value.heros,
             heroNameQuery = state.value.heroNameQuery,
             heroFilter = state.value.heroFilter,
             attributeFilter = state.value.primaryAttribute
         )
-        state.value = state.value.copy( filteredHeros = filteredList)
+        state.value = state.value.copy(filteredHeros = filteredList)
     }
 
     private fun getHeros() {

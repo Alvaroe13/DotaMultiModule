@@ -1,5 +1,6 @@
 package com.alvaro.ui_herolist.ui
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,9 +13,12 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import coil.ImageLoader
 import com.alvaro.core.domain.ProgressBarState
+import com.alvaro.core.domain.UIComponentState
+import com.alvaro.ui_herolist.components.HeroListFilterDialog
 import com.alvaro.ui_herolist.components.HeroListItem
 import com.alvaro.ui_herolist.components.HeroListToolbar
 
+@ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 @Composable
 fun HeroList(
@@ -38,7 +42,7 @@ fun HeroList(
                     events(HeroListEvents.FilterHeros)
                 },
                 onShowFilterDialog = {
-
+                    events(HeroListEvents.UpdateFilterDialogState(uiComponentState = UIComponentState.Show))
                 }
             )
 
@@ -53,6 +57,19 @@ fun HeroList(
                         },
                     )
                 }
+            }
+
+            if (state.filterDialogState is UIComponentState.Show) {
+
+                HeroListFilterDialog(
+                    heroFilter = state.heroFilter,
+                    onUpdateHeroFilter = { heroFilter ->
+                        events(HeroListEvents.UpdateHeroFilter(heroFilter))
+                    },
+                    onCloseDialog = {
+                        events(HeroListEvents.UpdateFilterDialogState(uiComponentState = UIComponentState.Hide))
+                    }
+                )
             }
 
         }
