@@ -6,18 +6,23 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvaro.core.domain.DataState
+import com.alvaro.core.domain.Queue
+import com.alvaro.core.domain.UIComponent
+import com.alvaro.core.util.Logger
 import com.alvaro.hero_interactors.GetHeroDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class HeroDetailViewModel
 @Inject
 constructor(
     private val getHeroDetails: GetHeroDetails,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    @Named("heroDetailsLogger") private val logger: Logger
 ) : ViewModel() {
 
 
@@ -47,9 +52,23 @@ constructor(
                     state.value = state.value.copy(hero = dataState.data)
                 }
                 is DataState.Response -> {
-                    //TODO implement
+                    when (dataState.uiComponent) {
+                        is UIComponent.Dialog -> {
+                            appendToMessageQueue(uiComponent = dataState.uiComponent)
+                        }
+                        is UIComponent.None -> {
+                            logger.log(" error= ${(dataState.uiComponent as UIComponent.None).message}")
+                        }
+                    }
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun appendToMessageQueue(uiComponent: UIComponent) {
+        val queue = state.value.messageQueue
+        queue.add(uiComponent)
+        state.value = state.value.copy(messageQueue = Queue(mutableListOf())) // force recompose
+        state.value = state.value.copy(messageQueue = queue)
     }
 }

@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberAnimatedNavController()
 
                 BoxWithConstraints {
+
                     AnimatedNavHost(
                         navController = navController,
                         startDestination = Screen.HeroList.route,
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     )
+
                 }
 
             }

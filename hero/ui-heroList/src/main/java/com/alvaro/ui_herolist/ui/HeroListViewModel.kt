@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alvaro.core.domain.DataState
+import com.alvaro.core.domain.Queue
 import com.alvaro.core.domain.UIComponent
 import com.alvaro.core.domain.UIComponentState
 import com.alvaro.core.util.Logger
@@ -76,6 +77,7 @@ constructor(
         state.value = state.value.copy(heroNameQuery = heroNameQuery)
     }
 
+    // logic that filters list based on filter options selected
     private fun filterHeros() {
         val filteredList = filterHeros.exceute(
             currentList = state.value.heros,
@@ -92,6 +94,7 @@ constructor(
                 is DataState.Response -> {
                     when (dataState.uiComponent) {
                         is UIComponent.Dialog -> {
+                            appendToMessageQueue( uiComponent = dataState.uiComponent )
                             logger.log((dataState.uiComponent as UIComponent.Dialog).message)
                         }
                         is UIComponent.None -> {
@@ -109,5 +112,13 @@ constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+
+    private fun appendToMessageQueue(uiComponent: UIComponent){
+        val queue = state.value.messageQueue
+        queue.add(uiComponent)
+        state.value = state.value.copy(messageQueue = Queue(mutableListOf())) // force recompose
+        state.value = state.value.copy(messageQueue = queue)
     }
 }

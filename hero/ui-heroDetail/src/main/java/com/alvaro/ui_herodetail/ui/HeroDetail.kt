@@ -31,7 +31,12 @@ fun HeroDetail(
     state: HeroDetailState,
     imageLoader: ImageLoader,
 ) {
-    DefaultScreenUI(progressBarState = state.progressBarState) {
+    DefaultScreenUI(
+        messageQueue = state.messageQueue,
+        progressBarState = state.progressBarState,
+        onRemoveHeadFromQueue = {
+        },
+    ) {
 
         state.hero?.let { hero ->
             LazyColumn(
