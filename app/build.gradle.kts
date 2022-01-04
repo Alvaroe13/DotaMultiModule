@@ -69,4 +69,6 @@ dependencies{
 
     implementation(Hilt.android)
     kapt(Hilt.compiler)
+
+    implementation(Accompanist.animationNavigation)
 }
