@@ -1,5 +1,6 @@
 package com.alvaro.hero_datasource_test.network
 
+import com.alvaro.hero_datasource.network.EndPoints
 import com.alvaro.hero_datasource.network.HeroService
 import com.alvaro.hero_datasource.network.HeroServiceImpl
 import com.alvaro.hero_datasource_test.network.data.HeroDataEmpty
@@ -33,35 +34,35 @@ class HeroServiceFake private constructor() {
                 engine {
                     addHandler { request ->
                         when (request.url.fullUrl) {
-                            "https://api.opendota.com/api/heroStats" -> {
+                            EndPoints.HERO_STATS -> {
                                 val responseHeaders = headersOf(
                                     "Content-Type" to listOf("application/json", "charset=utf-8")
                                 )
                                 when(type){
                                     is HeroServiceResponseType.EmptyList -> {
                                         respond(
-                                            HeroDataEmpty.data,
+                                            content = HeroDataEmpty.data,
                                             status = HttpStatusCode.OK,
                                             headers = responseHeaders
                                         )
                                     }
                                     is HeroServiceResponseType.MalformedData -> {
                                         respond(
-                                            HeroDataMalformed.data,
+                                            content = HeroDataMalformed.data,
                                             status = HttpStatusCode.OK,
                                             headers = responseHeaders
                                         )
                                     }
                                     is HeroServiceResponseType.GoodData -> {
                                         respond(
-                                            HeroDataValid.data,
+                                            content = HeroDataValid.data,
                                             status = HttpStatusCode.OK,
                                             headers = responseHeaders
                                         )
                                     }
                                     is HeroServiceResponseType.Http404 -> {
                                         respond(
-                                            HeroDataEmpty.data,
+                                            content = HeroDataEmpty.data,
                                             status = HttpStatusCode.NotFound,
                                             headers = responseHeaders
                                         )
