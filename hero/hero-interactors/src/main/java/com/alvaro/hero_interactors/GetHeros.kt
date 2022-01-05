@@ -37,6 +37,8 @@ class GetHeros(
 
             cache.insert(heros)
 
+            //println("HeroListTAG, list size= ${heros.size}" )
+
             val cachedHeros = cache.selectAll()
 
             emit(DataState.Data(cachedHeros))

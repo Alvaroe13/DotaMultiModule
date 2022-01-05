@@ -11,7 +11,7 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.http.*
 
-class HeroServiceFake {
+class HeroServiceFake private constructor() {
 
     companion object Factory {
 
