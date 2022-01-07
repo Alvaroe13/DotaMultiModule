@@ -9,7 +9,7 @@ import kotlin.math.round
 class FilterHeros {
 
 
-    fun exceute(
+    fun execute(
         currentList: List<Hero>,
         heroNameQuery: String,
         heroFilter: HeroFilter,

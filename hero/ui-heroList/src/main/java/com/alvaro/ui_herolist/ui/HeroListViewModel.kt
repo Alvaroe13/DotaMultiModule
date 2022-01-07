@@ -82,7 +82,7 @@ constructor(
 
     // logic that filters list based on filter options selected
     private fun filterHeros() {
-        val filteredList = filterHeros.exceute(
+        val filteredList = filterHeros.execute(
             currentList = state.value.heros,
             heroNameQuery = state.value.heroNameQuery,
             heroFilter = state.value.heroFilter,
