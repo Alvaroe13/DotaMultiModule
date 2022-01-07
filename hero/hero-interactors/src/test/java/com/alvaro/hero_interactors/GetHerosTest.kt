@@ -14,6 +14,12 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
+/**
+ * 1. Success (Retrieve a list of heros)
+ * 2. Failure (Retrieve an empty list of heros)
+ * 3. Failure (Retrieve malformed data (empty cache))
+ * 4. Success (Retrieve malformed data but still returns data from cache)
+ */
 class GetHerosTest {
 
     //system in test
@@ -59,12 +65,107 @@ class GetHerosTest {
     }
 
     @Test
-    fun `get heroes MALFORMED DATA  success from cache`() = runBlocking {
+    fun `failed retrieving data from server (MALFORMED DATA), successfully get empty list from cache since no new item was added`() =
+        runBlocking {
+
+            // setup
+            val cache = HeroCacheFake(database = HeroDatabaseFake())
+            val service = HeroServiceFake.build(
+                type = HeroServiceResponseType.MalformedData // malformed data in json payload
+            )
+
+            getHeros = GetHeros(
+                cache = cache,
+                service = service
+            )
+
+            //confirms cache is empty first
+            val cachedHeros = cache.selectAll()
+            assert(cachedHeros.isEmpty())
+
+            val emissions = getHeros.execute().toList()
+
+            assert(emissions[0] == DataState.Loading<List<Hero>>(ProgressBarState.Loading))
+
+            //Confirm data is malformed
+            assert(emissions[1] is DataState.Response<List<Hero>>)
+            val response = emissions[1] as DataState.Response
+            val dialogResponse = response.uiComponent as UIComponent.Dialog
+            assert(dialogResponse.title == "Network Data Error")
+            assert(dialogResponse.message.contains("Unexpected JSON token at offset"))
+
+            //confirm cache is STILL empty
+            // assert(cache.selectAll().isEmpty())
+            assert(emissions[2] is DataState.Data)
+            val data = emissions[2] as DataState.Data<List<Hero>>
+            assert(data.data?.size == 0)
+
+            //confirm pb state in idle
+            assert(emissions[3] == DataState.Loading<List<Hero>>(ProgressBarState.Idle))
+        }
+
+    @Test
+    fun ` failed retrieving data from server (MALFORMED DATA), therefore no new hero added to cache but retrieved successfully the ones already in cache`() =
+        runBlocking {
+
+            // setup
+            val cache = HeroCacheFake(database = HeroDatabaseFake())
+            val service = HeroServiceFake.build(
+                type = HeroServiceResponseType.MalformedData // malformed data in json payload
+            )
+
+            getHeros = GetHeros(
+                cache = cache,
+                service = service
+            )
+
+            //confirms cache is empty first
+            var cachedHeros = cache.selectAll()
+            assert(cachedHeros.isEmpty())
+
+
+            // Add some data to the cache by executing a successful request
+            val heroData = serializeHeroData(jsonData = HeroDataValid.data)
+            cache.insert(heros = heroData)
+
+            // Confirm the cache is not empty anymore
+            cachedHeros = cache.selectAll()
+            assert(cachedHeros.size == HeroDataValid.NUM_HEROS)
+
+            // Execute the use-case
+            val emissions = getHeros.execute().toList()
+
+            // First emission should be loading
+            assert(emissions[0] == DataState.Loading<List<Hero>>(ProgressBarState.Loading))
+
+            // Confirm second emission is error response
+            assert(emissions[1] is DataState.Response)
+            assert(((emissions[1] as DataState.Response).uiComponent as UIComponent.Dialog).title == "Network Data Error")
+            assert(
+                ((emissions[1] as DataState.Response).uiComponent as UIComponent.Dialog).message.contains(
+                    "Unexpected JSON token at offset"
+                )
+            )
+
+            // Confirm third emission is data from the cache
+            assert(emissions[2] is DataState.Data)
+            assert((emissions[2] as DataState.Data).data?.size == HeroDataValid.NUM_HEROS)
+
+            // Confirm that no new elements has been added to cache since data from server was malformed and threw an exception
+            cachedHeros = cache.selectAll()
+            assert(cachedHeros.size == HeroDataValid.NUM_HEROS)
+
+            // Confirm loading state is IDLE
+            assert(emissions[3] == DataState.Loading<List<Hero>>(ProgressBarState.Idle))
+        }
+
+    @Test
+    fun `server returns empty list and nothing breaks`() = runBlocking {
 
         // setup
         val cache = HeroCacheFake(database = HeroDatabaseFake())
         val service = HeroServiceFake.build(
-            type = HeroServiceResponseType.MalformedData // malformed data in json payload
+            type = HeroServiceResponseType.EmptyList // malformed data in json payload
         )
 
         getHeros = GetHeros(
@@ -72,40 +173,26 @@ class GetHerosTest {
             service = service
         )
 
-        //confirms cache is empty first
-        var cachedHeros = cache.selectAll()
-        assert(cachedHeros.isEmpty())
+        // init value is empty
+        val cachedHeroes = cache.selectAll()
+        assert(cachedHeroes.isEmpty())
 
-
-        // Add some data to the cache by executing a successful request
-        val heroData = serializeHeroData(jsonData = HeroDataValid.data)
-        cache.insert(heros = heroData)
-
-        // Confirm the cache is not empty anymore
-        cachedHeros = cache.selectAll()
-        assert(cachedHeros.size == HeroDataValid.NUM_HEROS)
-
-        // Execute the use-case
+        //execute use-case
         val emissions = getHeros.execute().toList()
 
-        // First emission should be loading
-        assert(emissions[0] == DataState.Loading<List<Hero>>(ProgressBarState.Loading))
+        //Confirm pb is loading
+        assert(emissions[0] == DataState.Loading<List<Hero>>(progressBarState = ProgressBarState.Loading))
 
-        // Confirm second emission is error response
-        assert(emissions[1] is DataState.Response)
-        assert(((emissions[1] as DataState.Response).uiComponent as UIComponent.Dialog).title == "Network Data Error")
-        assert(((emissions[1] as DataState.Response).uiComponent as UIComponent.Dialog).message.contains("Unexpected JSON token at offset"))
+        //confirms data from server is empty
+        assert(emissions[1] is DataState.Data)
+        val data = emissions[1] as DataState.Data<List<Hero>>
+        assert(data.data?.size == 0)
 
-        // Confirm third emission is data from the cache
-        assert(emissions[2] is DataState.Data)
-        assert((emissions[2] as DataState.Data).data?.size == HeroDataValid.NUM_HEROS)
+        //confirm dara from cache is empty as well
+        assert(cache.selectAll().isEmpty())
 
-        // Confirm the cache is still not empty
-        cachedHeros = cache.selectAll()
-        assert(cachedHeros.size == HeroDataValid.NUM_HEROS)
-
-        // Confirm loading state is IDLE
-        assert(emissions[3] == DataState.Loading<List<Hero>>(ProgressBarState.Idle))
+        //Confirm pb is idle
+        assert(emissions[2] == DataState.Loading<List<Hero>>(progressBarState = ProgressBarState.Idle))
     }
 
 }
