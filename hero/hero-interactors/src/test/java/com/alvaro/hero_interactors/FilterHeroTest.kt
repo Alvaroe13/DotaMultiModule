@@ -15,6 +15,10 @@ import kotlin.random.Random
  * 2. Success (Order by localizedName name DESC)
  * 3. Success (Order by localizedName name ASC)
  * 4. Success (Order by 'proWins' % ASC)
+ * 5. Success (Order by 'proWins' % DESC)
+ * 6. Success (Filter by 'HeroAttribute' "Strength")
+ * 7. Success (Filter by 'HeroAttribute' "Agility")
+ * 8. Success (Filter by 'HeroAttribute' "Intelligence")
  */
 class FilterHeroTest {
 
@@ -45,7 +49,7 @@ class FilterHeroTest {
         //confirm name inserted as query is contain in list filtered
         var heroFound = false
         heroListFilter.forEach { heroFiltered ->
-            println("testTAG, name query ${nameQuery}, hero filtered name= ${heroFiltered.localizedName}")
+           // println("testTAG, name query ${nameQuery}, hero filtered name= ${heroFiltered.localizedName}")
             if (heroFiltered.localizedName == nameQuery) {
                 heroFound = true
             }
@@ -96,7 +100,7 @@ class FilterHeroTest {
         for (index in 1 until heroListFiltered.size - 1) {
             val heroCurrent = heroListFiltered[index]
             val heroNext = heroListFiltered[index + 1]
-            println("HeroTestTAG, current= ${heroCurrent.localizedName}, next= ${heroNext.localizedName}")
+           // println("HeroTestTAG, current= ${heroCurrent.localizedName}, next= ${heroNext.localizedName}")
             assert(heroCurrent.localizedName.toCharArray()[0] <= heroNext.localizedName.toCharArray()[0])
         }
     }
@@ -159,6 +163,69 @@ class FilterHeroTest {
 
             //println("HeroTestTAG, current= ${heroCurrent.localizedName}, ${heroCurrentProWinRate}, next= ${heroNext.localizedName}, ${heroNextProWinRate}")
             assert(heroCurrentProWinRate >= heroNextProWinRate)
+        }
+    }
+
+    @Test
+    fun`filter heroes by attribute STRENGHT success`() = runBlocking{
+
+        val heroList = serializeHeroData(jsonData = HeroDataValid.data)
+
+        filterHeros = FilterHeros()
+
+        //execute use-case
+        val heroListFiltered = filterHeros.execute(
+            currentList = heroList,
+            heroNameQuery = "",
+            heroFilter = HeroFilter.Hero(),
+            attributeFilter = HeroAttribute.Strength
+        )
+
+        heroListFiltered.forEach{ hero ->
+           // println("FilterListTestTAG name = ${hero.localizedName}, attr= ${hero.primaryAttribute.uiValue}")
+            assert(hero.primaryAttribute is HeroAttribute.Strength)
+        }
+    }
+
+    @Test
+    fun`filter heroes by attribute AGILITY success`() = runBlocking{
+
+        val heroList = serializeHeroData(jsonData = HeroDataValid.data)
+
+        filterHeros = FilterHeros()
+
+        //execute use-case
+        val heroListFiltered = filterHeros.execute(
+            currentList = heroList,
+            heroNameQuery = "",
+            heroFilter = HeroFilter.Hero(),
+            attributeFilter = HeroAttribute.Agility
+        )
+
+        heroListFiltered.forEach{ hero ->
+            //println("FilterListTestTAG name = ${hero.localizedName}, attr= ${hero.primaryAttribute.uiValue}")
+            assert(hero.primaryAttribute is HeroAttribute.Agility)
+        }
+    }
+
+    @Test
+    fun`filter heroes by attribute INTELLIGENCE success`() = runBlocking{
+
+        val heroList = serializeHeroData(jsonData = HeroDataValid.data)
+
+        filterHeros = FilterHeros()
+
+        //execute use-case
+        val heroListFiltered = filterHeros.execute(
+            currentList = heroList,
+            heroNameQuery = "",
+            heroFilter = HeroFilter.Hero(),
+            attributeFilter = HeroAttribute.Intelligence
+        )
+
+        heroListFiltered.forEach{ hero ->
+            //println("FilterListTestTAG name = ${hero.localizedName}, attr= ${hero.primaryAttribute.uiValue}")
+            assert(hero.primaryAttribute is HeroAttribute.Intelligence)
         }
     }
 
