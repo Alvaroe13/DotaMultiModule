@@ -24,6 +24,7 @@ import com.alvaro.ui_herolist.ui.test.TAG_HERO_PRIMARY_ATTRIBUTE
 import kotlin.math.round
 import com.alvaro.ui_herolist.R
 
+
 @Composable
 fun HeroListItem(
     hero: Hero,
@@ -63,7 +64,7 @@ fun HeroListItem(
             ,
             verticalAlignment = Alignment.CenterVertically
         ){
-            Image( // TODO(Replace with Image)
+            Image(
                 modifier = Modifier
                     .width(120.dp)
                     .height(70.dp)

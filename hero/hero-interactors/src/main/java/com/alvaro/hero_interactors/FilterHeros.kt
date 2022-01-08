@@ -76,8 +76,7 @@ class FilterHeros {
         return if (proPick <= 0) {
             0
         } else {
-            val winRate: Int =
-                round(proWins / proPick * 100).toInt()
+            val winRate: Int = round(proWins / proPick * 100).toInt()
             winRate
         }
     }
